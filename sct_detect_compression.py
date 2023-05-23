@@ -8,9 +8,9 @@
 # For details, see Horakova et al., 2022 (https://pubmed.ncbi.nlm.nih.gov/35371944/)
 #
 # ----------------------------------------------------------------------------
-# Copyright (c) 2022 Polytechnique Montreal <www.neuro.polymtl.ca>
+# Copyright (c) 2023 Polytechnique Montreal <www.neuro.polymtl.ca>
 # Authors: Jan Valosek
-#
+# Modified by: Etienne du Fayet 
 # About the license: see the file LICENSE.TXT
 ##############################################################################
 
@@ -251,20 +251,30 @@ def main(argv: Sequence[str]):
             # Note: the key is a tuple (e.g. `1,`), not an int (e.g., 1), thus key[0] is used to convert tuple to int
             # and `,` is used to convert int back to tuple
             # TODO - the keys could be changed from tuple to int inside the compute_shape function -> consider that
-            if torsion_slices == 3:
-                metrics_agg_merged[key]['Torsion'] = 1/6 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
-                                                                metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
-                                                            abs(metrics_agg_merged[key]['MEAN(orientation)'] -
-                                                                metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']) +
-                                                            abs(metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] -
-                                                                metrics_agg_merged[key[0] - 2,]['MEAN(orientation)']) +
-                                                            abs(metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] -
-                                                                metrics_agg_merged[key[0] + 2,]['MEAN(orientation)']) +
-                                                            abs(metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] -
-                                                                metrics_agg_merged[key[0] - 3,]['MEAN(orientation)']) +
-                                                            abs(metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] -
-                                                                metrics_agg_merged[key[0] + 3,]['MEAN(orientation)']))
-                # TODO - implement also equations for torsion_slices == 1 and torsion_slices == 2
+            if metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
+            metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
+            metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None and \
+            metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] is not None and \
+            metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] is not None and \
+            metrics_agg_merged[key[0] - 3,]['MEAN(orientation)'] is not None and \
+            metrics_agg_merged[key[0] + 3,]['MEAN(orientation)'] is not None:
+            
+            
+            
+                if torsion_slices == 3:
+                    metrics_agg_merged[key]['Torsion'] = 1/6 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                    metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
+                                                                abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                    metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']) +
+                                                                abs(metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] -
+                                                                    metrics_agg_merged[key[0] - 2,]['MEAN(orientation)']) +
+                                                                abs(metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] -
+                                                                    metrics_agg_merged[key[0] + 2,]['MEAN(orientation)']) +
+                                                                abs(metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] -
+                                                                    metrics_agg_merged[key[0] - 3,]['MEAN(orientation)']) +
+                                                                abs(metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] -
+                                                                    metrics_agg_merged[key[0] + 3,]['MEAN(orientation)']))
+                    # TODO - implement also equations for torsion_slices == 1 and torsion_slices == 2
         else:
             metrics_agg_merged[key]['Torsion'] = None
 
@@ -292,23 +302,41 @@ def main(argv: Sequence[str]):
         if disc in supported_discs:
             # Get quantitative metrics for given disc based on its slice
             # Note: [slice,] is used to convert int to tuple
+            
             cr = metrics_agg_merged[slice,]['CompressionRatio']*100
             csa = metrics_agg_merged[slice,]['MEAN(area)']
             solidity = metrics_agg_merged[slice,]['MEAN(solidity)']*100
             torsion = metrics_agg_merged[slice,]['Torsion']
-            # Compute compression probability
-            probability = compute_compression_probability(cr, csa, solidity, torsion, disc)
-            # TODO - this is probably useful just for a debug --> print this with verbosity == 2
-            print(f'Compression probability for disc {disc} (corresponding to slice {slice}) is {probability:.3f}.')
-            if probability > CUT_OFF:
-                compression_dict[disc] = slice
 
-    print('\nCompression(s) was detected at:')
+            # Compute compression probability if nothing is none 
+            if torsion == None: 
+                probability = None
+
+            else:
+                
+                # Compute compression probability
+                probability = compute_compression_probability(cr, csa, solidity, torsion, disc)
+                # TODO - this is probably useful just for a debug --> print this with verbosity == 2
+                #print(f'Compression probability for disc {disc} (corresponding to slice {slice}) is {probability:.3f}.')
+
+            if probability != None: 
+                if probability > CUT_OFF :
+                    compression_dict[disc] = slice
+
+    '''print('\nCompression(s) was detected at:')
     for disc, slice in compression_dict.items():
         # Note: [slice,] is used to convert int to tuple
         cr = metrics_agg_merged[slice,]['CompressionRatio']*100
         csa = metrics_agg_merged[slice,]['MEAN(area)']
         print(f'\tdisc {disc} (corresponding to slice {slice}). CSA = {csa:.2f} mm2. CR = {cr:.2f}.')
+        #print(disc)
+        #print(len(compression_dict))'''
+    
+    disc_list = []
+    for key in compression_dict.keys():
+        disc_list.append(key)
+
+    print(disc_list)
 
 
 if __name__ == "__main__":
