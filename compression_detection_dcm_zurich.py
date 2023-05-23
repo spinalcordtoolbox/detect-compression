@@ -18,8 +18,8 @@ from spinalcordtoolbox.utils.fs import get_absolute_path
 from spinalcordtoolbox.centerline.core import ParamCenterline
 from spinalcordtoolbox.aggregate_slicewise import aggregate_per_slice_or_level, merge_dict, func_wa, func_std
 
-
-
+path_to_dataset = '/Users/etiennedufayet'
+path_to_sct = '/Users/etiennedufayet'
 
 
 #récupère tous les subdirs d'un fichier = ici le fichier des patients
@@ -32,7 +32,7 @@ def get_subdirs(root_dir):
             subdirs.extend(get_subdirs(entry.path))
     return subdirs   
 
-patients = get_subdirs("/Users/etiennedufayet/dcm-zurich")
+patients = get_subdirs(path_to_dataset+"/dcm-zurich")
 
 
 patient_seg_dict = {}
@@ -40,9 +40,9 @@ group_funcs = (('MEAN', func_wa), ('STD', func_std))
 nb_compressions = 0
 
 for patient in patients: 
-    input_seg = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-SC_mask-manual.nii.gz"
-    input_discfile = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
-    compression_file = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-compression-manual.nii.gz"
+    input_seg = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-SC_mask-manual.nii.gz"
+    input_discfile = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
+    compression_file = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-compression-manual.nii.gz"
 
 
     if  os.path.exists(input_seg) and os.path.exists(input_discfile) and os.path.exists(compression_file):

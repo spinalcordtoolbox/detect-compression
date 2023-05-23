@@ -23,6 +23,8 @@ def get_subdirs(root_dir):
 
 patients = get_subdirs("/Users/etiennedufayet/dcm-zurich")
 
+path_to_dataset = '/Users/etiennedufayet'
+path_to_sct = '/Users/etiennedufayet'
 
 ## compute a dict of subjects - compressed discs with Jan's algorithm
 
@@ -31,9 +33,9 @@ input_seg_list = []
 input_discfile_list = []
 
 for patient in patients: 
-    input_mri = "/Users/etiennedufayet/dcm-zurich/"+patient+"/anat/"+patient+"_acq-axial_T2w.nii.gz"
-    input_seg = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-SC_mask-manual.nii.gz"
-    input_discfile = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
+    input_mri = path_to_dataset+"/dcm-zurich/"+patient+"/anat/"+patient+"_acq-axial_T2w.nii.gz"
+    input_seg = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-SC_mask-manual.nii.gz"
+    input_discfile = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
     
     if os.path.exists(input_mri) and os.path.exists(input_seg) and os.path.exists(input_discfile):
         input_mri_list.append(input_mri)
@@ -48,7 +50,7 @@ patient_compression_dict = {}
 for input_mri, input_seg, input_discfile, patient in zip(input_mri_list, input_seg_list, input_discfile_list, patients):
     # Run the Python code with the input file as an argument
     
-    command = ['python', '/Users/etiennedufayet/spinalcordtoolbox/spinalcordtoolbox/scripts/V2_sct_detect_compression.py','-i',input_mri, '-s', input_seg,  '-discfile', input_discfile]
+    command = ['python', path_to_sct+'/spinalcordtoolbox/spinalcordtoolbox/scripts/V2_sct_detect_compression.py','-i',input_mri, '-s', input_seg,  '-discfile', input_discfile]
     process = subprocess.Popen(command, stdout=subprocess.PIPE)
     output, error = process.communicate()
 
@@ -76,8 +78,8 @@ manual_patient_compression_disc = {}
 
 for patient in patients: 
     
-    compression_file = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-compression-manual.nii.gz"
-    label_file = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
+    compression_file = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-compression-manual.nii.gz"
+    label_file = path_to_dataset+"/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
 
     ## prepare data
     if os.path.exists(compression_file) and os.path.exists(label_file):
@@ -89,7 +91,7 @@ for patient in patients:
 
 
         ## prepare labels 
-        command = ['python', '/Users/etiennedufayet/spinalcordtoolbox/spinalcordtoolbox/scripts/sct_label_utils.py','-i',label_file, '-display']
+        command = ['python', path_to_sct+'/spinalcordtoolbox/spinalcordtoolbox/scripts/sct_label_utils.py','-i',label_file, '-display']
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
         output, error = process.communicate()
 
