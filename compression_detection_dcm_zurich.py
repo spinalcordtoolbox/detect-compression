@@ -9,6 +9,8 @@ import os
 import pprint
 import pandas as pd
 import csv
+import nibabel as nib
+
 
 
 from spinalcordtoolbox.process_seg import compute_shape
@@ -35,13 +37,15 @@ patients = get_subdirs("/Users/etiennedufayet/dcm-zurich")
 
 patient_seg_dict = {}
 group_funcs = (('MEAN', func_wa), ('STD', func_std))
+nb_compressions = 0
 
 for patient in patients: 
     input_seg = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-SC_mask-manual.nii.gz"
     input_discfile = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_labels-manual.nii.gz"
+    compression_file = "/Users/etiennedufayet/dcm-zurich/derivatives/labels/"+patient+"/anat/"+patient+"_acq-axial_T2w_label-compression-manual.nii.gz"
 
 
-    if  os.path.exists(input_seg) and os.path.exists(input_discfile):
+    if  os.path.exists(input_seg) and os.path.exists(input_discfile) and os.path.exists(compression_file):
 
         ## args for metrics computation
         fname_seg = input_seg
@@ -130,7 +134,42 @@ for patient in patients:
             else:
                 metrics_agg_merged[key]['Torsion'] = None
 
-    patient_seg_dict[patient] = metrics_agg_merged
+        
+    ## before leaving the loop, we want to loop on each slice of the subdict to figure out whether or not it is compressed  
+        
+        
+        
+        nb_slices = len(metrics_agg_merged)
+        ## Load the compression file 
+        compression_img = nib.load(compression_file)
+        compression_data = compression_img.get_fdata()
+    
+        if nb_slices == compression_data.shape[2]: 
+            z=0
+            while(z < compression_data.shape[2]):
+                slice_is_compressed = 0
+                key = (z,)
+                for x in range(compression_data.shape[0]):
+                    for y in range(compression_data.shape[1]):
+                        if compression_data[x, y, z] == 1:
+                            slice_is_compressed = 1
+                            nb_compressions +=1
+                            
+                metrics_agg_merged[key]['is_compressed'] = slice_is_compressed
+                z+=1 
+
+        
+        patient_seg_dict[patient] = metrics_agg_merged
+
+pprint.pprint(patient_seg_dict, indent=4)
+print(nb_compressions)
+
+
+
+        
+
+
+
 
 
 
@@ -231,3 +270,4 @@ if  os.path.exists(input_seg) and os.path.exists(input_discfile):
 patient_seg_dict[patient] = metrics_agg_merged
 
 pprint.pprint(patient_seg_dict, indent=4)'''
+'''jhvchdjhd'''
