@@ -1,6 +1,6 @@
 # Morphometric parameters- based compression detection with dcm_zurich dataset
 
-commit number of the dataset (git_annex neuropoly): 3b2a27f8ab97ca5ca3409a4b7b1dbdc20e130dd3
+commit number of the dataset (dcm/zurich - git_annex neuropoly): 3b2a27f8ab97ca5ca3409a4b7b1dbdc20e130dd3
 
 The aim of my work in this repo is to perform a compression detection method on dcm-zurich dataset.
 The approach will be ML-based, same as the one of sct_detect_compression, see [here](https://github.com/neuropoly/idea-projects/issues/2).
