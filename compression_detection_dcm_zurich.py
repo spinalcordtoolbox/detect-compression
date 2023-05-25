@@ -177,8 +177,8 @@ for subdict in patient_seg_dict.values():
     df = pd.concat([df, met])   # concat the new df that is the dict met with df 
     df.reset_index(drop=True, inplace=True) # reinitialize the index
 
-print(df)
-
+chemin_fichier = '../dataset_zurich_metrics.csv'
+df.to_csv(chemin_fichier, index=False)
 
 
 
