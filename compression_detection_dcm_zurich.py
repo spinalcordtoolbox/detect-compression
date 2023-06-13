@@ -56,7 +56,7 @@ for patient in patients:
                 smooth=30,
                 minmax=True)
         verbose = 1
-        torsion_slices = 3
+        torsion_slices = 1
 
        # Compute morphometric metrics
         metrics, fit_results = compute_shape(fname_seg,
@@ -107,32 +107,108 @@ for patient in patients:
                 # Note: the key is a tuple (e.g. `1,`), not an int (e.g., 1), thus key[0] is used to convert tuple to int
                 # and `,` is used to convert int back to tuple
                 # TODO - the keys could be changed from tuple to int inside the compute_shape function -> consider that
-                if metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
-                metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
-                metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None and \
-                metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] is not None and \
-                metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] is not None and \
-                metrics_agg_merged[key[0] - 3,]['MEAN(orientation)'] is not None and \
-                metrics_agg_merged[key[0] + 3,]['MEAN(orientation)'] is not None:
                 
                 
-                
-                    if torsion_slices == 3:
-                        metrics_agg_merged[key]['Torsion'] = 1/6 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                if (key[0] - 3 >= 0) and (key[0] + 3 < len(metrics_agg_merged)):
+
+                        if metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 3,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 3,]['MEAN(orientation)'] is not None:
+                        
+                    
+                    
+                            metrics_agg_merged[key]['Torsion'] = 1/6 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 2,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 2,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 3,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 3,]['MEAN(orientation)']))
+                    
+                    
+
+                        
+                        # TODO - implement also equations for torsion_slices == 1 and torsion_slices == 2
+
+
+                elif (key[0] - 2 == 0) or (key[0] + 2 == len(metrics_agg_merged)-1): 
+
+                        if metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] is not None : 
+                            
+                            metrics_agg_merged[key]['Torsion'] = 1/4 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 2,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 2,]['MEAN(orientation)']))
+                        
+                    
+
+                        elif metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] is not None and \
+                        metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] is not None:
+                            
+                            metrics_agg_merged[key]['Torsion'] = 1/4 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] - 2,]['MEAN(orientation)']) +
+                                                                        abs(metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] -
+                                                                            metrics_agg_merged[key[0] + 2,]['MEAN(orientation)']))
+                    
+                        
+
+                elif (key[0] - 1 == 0) or (key[0] + 1 == len(metrics_agg_merged)-1): 
+
+                    if metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
+                    metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
+                    metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None :
+                        
+                        metrics_agg_merged[key]['Torsion'] = 1/2 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
                                                                         metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
                                                                     abs(metrics_agg_merged[key]['MEAN(orientation)'] -
-                                                                        metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']) +
-                                                                    abs(metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] -
-                                                                        metrics_agg_merged[key[0] - 2,]['MEAN(orientation)']) +
-                                                                    abs(metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] -
-                                                                        metrics_agg_merged[key[0] + 2,]['MEAN(orientation)']) +
-                                                                    abs(metrics_agg_merged[key[0] - 2,]['MEAN(orientation)'] -
-                                                                        metrics_agg_merged[key[0] - 3,]['MEAN(orientation)']) +
-                                                                    abs(metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] -
-                                                                        metrics_agg_merged[key[0] + 3,]['MEAN(orientation)']))
-                        # TODO - implement also equations for torsion_slices == 1 and torsion_slices == 2
-            else:
-                metrics_agg_merged[key]['Torsion'] = None
+                                                                        metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']))
+                        
+                        
+                    elif metrics_agg_merged[key]['MEAN(orientation)'] is not None and \
+                    metrics_agg_merged[key[0] - 1,]['MEAN(orientation)'] is not None and \
+                    metrics_agg_merged[key[0] + 1,]['MEAN(orientation)'] is not None and \
+                    metrics_agg_merged[key[0] + 2,]['MEAN(orientation)'] is  None:
+                
+                        metrics_agg_merged[key]['Torsion'] = 1/2 * (abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                        metrics_agg_merged[key[0] - 1,]['MEAN(orientation)']) +
+                                                                    abs(metrics_agg_merged[key]['MEAN(orientation)'] -
+                                                                        metrics_agg_merged[key[0] + 1,]['MEAN(orientation)']))
+                                                                   
+                    
+                else:
+                    metrics_agg_merged[key]['Torsion'] = None
+                
+                        
+                                    
+
+
+                           
+                                                                    
+
 
         
     ## before leaving the loop, we want to loop on each slice of the subdict to figure out whether or not it is compressed  
@@ -177,7 +253,7 @@ for subdict in patient_seg_dict.values():
     df = pd.concat([df, met])   # concat the new df that is the dict met with df 
     df.reset_index(drop=True, inplace=True) # reinitialize the index
 
-chemin_fichier = '../dataset_zurich_metrics.csv'
+chemin_fichier = '../dataset_zurich_metrics_4.csv'
 df.to_csv(chemin_fichier, index=False)
 
 
