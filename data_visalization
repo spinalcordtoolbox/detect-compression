@@ -1,0 +1,34 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+
+
+path_to_csv = '/Users/etiennedufayet/Desktop/STAGE_3A/Compression_detection_zurich/dataset_zurich_metrics_6.csv'
+
+df = pd.read_csv(path_to_csv)
+
+compression_dict = {}
+
+for i in range(1,np.max(df['patient_number']+1)):
+    print(i)
+    patient_dataset = df[df['patient_number'] == i]
+    nb_slices = np.max(patient_dataset['slice_number'])
+
+    patient_compression = patient_dataset[patient_dataset['is_compressed'] == 1]
+    
+    for slice in patient_compression['slice_number']:
+        position = np.round(slice/nb_slices, 2)
+
+        if position in compression_dict:
+            compression_dict[position] += 1
+        else:
+            compression_dict[position] = 1
+
+compression_dict = {k: compression_dict[k] for k in sorted(compression_dict)}
+
+print(compression_dict)
+
+
+

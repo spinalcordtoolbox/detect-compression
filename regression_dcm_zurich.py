@@ -14,6 +14,10 @@ from sklearn.model_selection import GridSearchCV
 
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
+
+
+
+
 path_to_csv = '/Users/etiennedufayet/Desktop/STAGE_3A/Compression_detection_zurich/dataset_zurich_metrics_4.csv'
 
 df = pd.read_csv(path_to_csv)
@@ -52,7 +56,6 @@ print(X_train, y_train)
 nombre_de_comp_train = (y_train == 1).sum()
 nombre_de_comp_test = (y_test == 1).sum()
 print(nombre_de_comp_train, nombre_de_comp_test)
-'''
 
 
 model = LogisticRegression()
@@ -74,7 +77,7 @@ selected_features = X_train.columns[selected_feature_indices]
 print("Selected Features:", selected_features)
 
 
-'''
+
 # adjust columns with respect to feature selection
 X_train_logistic = X_train.drop(columns=[col for col in X_train.columns if col not in selected_features])
 X_test_logistic = X_test.drop(columns=[col for col in X_test.columns if col not in selected_features])
@@ -118,8 +121,8 @@ plt.plot(threshold_list, auc_roc_list, label='auc_roc')
 
 plt.legend()
 plt.show()
-'''
-'''
+
+
 
 y_pred = np.where(probabilities > 0.105, 1, 0)
 
@@ -212,8 +215,9 @@ plt.plot(threshold_list, auc_roc_list_manual, label='auc_roc_manual')
 
 plt.legend()
 plt.show()
-'''
 
+
+'''
 
 model = SVC()
 
@@ -258,10 +262,17 @@ best_params = grid_search.best_params_
 
 print(best_params)
 
-'''
+model = SVC(**best_params)
+
 model.fit(X_train_svm, y_train)
 
 
+y_pred = model.predict(X_test_svm)
+
+cm = confusion_matrix(y_pred, y_test)
+
+print(cm)
+'''
 probabilities = model.predict_proba(X_test_svm)[:, 1]
 
 

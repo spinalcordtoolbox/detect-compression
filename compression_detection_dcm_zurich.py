@@ -238,6 +238,7 @@ for patient in patients:
 
 # Turn a multi-dict into a dataframe
 df = pd.DataFrame()
+patient_number = 1
 
 for subdict in patient_seg_dict.values(): 
     slices = subdict.keys()
@@ -247,13 +248,16 @@ for subdict in patient_seg_dict.values():
     
     for slice in met: 
         slice['slice_number'] = slice_nb
+        slice['patient_number'] = patient_number
         slice_nb += 1
+    
+    patient_number += 1
 
     met = pd.DataFrame(met)
     df = pd.concat([df, met])   # concat the new df that is the dict met with df 
     df.reset_index(drop=True, inplace=True) # reinitialize the index
 
-chemin_fichier = '../dataset_zurich_metrics_4.csv'
+chemin_fichier = '../dataset_zurich_metrics_6.csv'
 df.to_csv(chemin_fichier, index=False)
 
 
