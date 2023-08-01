@@ -1,4 +1,4 @@
-#Automatic detection of spinal cord compression
+# Automatic detection of spinal cord compression
 
 This repository contains scripts to perform automatic compression detection.
 
