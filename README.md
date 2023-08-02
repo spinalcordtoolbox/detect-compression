@@ -2,7 +2,11 @@
 
 This repository contains scripts to perform automatic compression detection.
 
-Currently, we use the following datasets: dcm_zurich - DCM patients inspired - DCM patients spine-generic data-multi-subject, r20230223 - healthy subjects and mild compressions
+Currently, we use the following datasets: 
+
+- `dcm_zurich` - DCM patients
+- `inspired` - DCM patients
+- spine-generic `data-multi-subject`, [r20230223](https://github.com/spine-generic/data-multi-subject/tree/r20230223) - healthy subjects and mild compressions
 
 For each subject, we do the following:
 
